@@ -1,0 +1,6 @@
+[midokura]
+name=Midokura Repository
+baseurl=http://<%= node["midokura"]["repo-username"] %>:<%= node["midokura"]["repo-password"] %>@<%= node["midokura"]["repo-url"] %>
+gpgkey=http://<%= node["midokura"]["repo-username"] %>:<%= node["midokura"]["repo-password"] %>@yum.midokura.com/repo/RPM-GPG-KEY-midokura
+gpgcheck=1
+enabled=1

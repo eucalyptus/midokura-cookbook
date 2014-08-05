@@ -1,0 +1,25 @@
+---
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
+
+platforms:
+  - name: centos-6.5
+    driver_config:
+      box: chef/centos-6.5
+      customize:
+        cpus: 2
+        memory: 3024
+        cpuexecutioncap: 100
+
+suites:
+  - name: default
+    run_list:
+      - recipe[cassandra::datastax]
+      - recipe[midokura::zookeeper]
+      - recipe[midokura::midonet-api]
+      - recipe[midokura::midonet-cp]
+      - recipe[midokura::midolman]
+    attributes: { midokura: { 'repo-username': 'USERNAME', 'repo-password': 'PASSWORD' }}

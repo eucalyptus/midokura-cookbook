@@ -1,0 +1,26 @@
+// Initialize namespace
+if (typeof window.MidoNet !== 'undefined') {
+  window.MidoNet.noClonflict = MidoNet;
+}
+global = window;
+window.MidoNet = {};
+
+
+MidoNet.config = {
+  // URI of the root of the API.
+  apiRoot: '<%= node['midokura']['midonet-api-url'] %>',
+  // URI of authentication API.
+  authURI: '<%= node['midokura']['midonet-api-url'] %>/login',
+  // URI of listing tenants API.
+  tenantURI: '<%= node['midokura']['midonet-api-url'] %>/tenants',
+  token: '999888777666',
+  pushState: true,
+
+  // This should point to the path where CP is deployed.
+    root: '/midonet-cp/',
+
+  // Logging level
+  log: {
+    level: 'NONE'
+  }
+};

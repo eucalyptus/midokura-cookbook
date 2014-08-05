@@ -1,0 +1,16 @@
+default['midokura']['repo-username'] = ''
+default['midokura']['repo-password'] = ''
+default['java']['jdk_version'] = '7'
+default['cassandra']['cluster_name'] = 'midonet'
+default['cassandra'][:version] = '2.0.9'
+default['cassandra'][:release] = '1'
+default['midokura']['repo-url'] = 'yum.midokura.com/repo/v1.5/RHEL/6/'
+default['midokura']['midonet-api-url'] = 'http://localhost/midonet-api'
+default['midokura']['zookeepers'] = ['127.0.0.1:2181']
+default['midokura']['cassandras'] = ['127.0.0.1:9160']
+default['midokura']['auth-auth_provider'] = 'org.midonet.api.auth.MockAuthService'
+default['midokura']['keystone-service_protocol'] = 'http'
+default['midokura']['keystone-service_host'] = '127.0.0.1'
+default['midokura']['keystone-service_port'] = 35357
+default['midokura']['keystone-service_port'] = '999888777666'
+default['midokura']['keystone-tenant_name'] = 'admin'
