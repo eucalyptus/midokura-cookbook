@@ -17,9 +17,5 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[cassandra::datastax]
-      - recipe[midokura::zookeeper]
-      - recipe[midokura::midonet-api]
-      - recipe[midokura::midonet-cp]
-      - recipe[midokura::midolman]
+      - recipe[midokura]
     attributes: { midokura: { 'repo-username': 'USERNAME', 'repo-password': 'PASSWORD' }}

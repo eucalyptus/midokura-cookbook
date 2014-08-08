@@ -1,4 +1,4 @@
-include_recipe "midokura::default"
+include_recipe "midokura::_common"
 
 package "midonet-cp"
 

@@ -1,4 +1,4 @@
-include_recipe "midokura::default"
+include_recipe "midokura::_common"
 
 package "midolman"
 execute "echo 'JAVA_HOME=/usr/lib/jvm/java-1.7.0/'| cat - /etc/midolman/midolman-env.sh > /tmp/out && mv /tmp/out /etc/midolman/midolman-env.sh"
