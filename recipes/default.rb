@@ -1,4 +1,5 @@
-include_recipe 'cassandra::datastax'
+include_recipe 'java'
+include_recipe 'cassandra'
 include_recipe 'midokura::zookeeper'
 include_recipe 'midokura::midonet-api'
 include_recipe 'midokura::midonet-cp'

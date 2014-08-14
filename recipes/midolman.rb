@@ -1,5 +1,10 @@
 include_recipe "midokura::_common"
 
+# Kernel shipping with RHEL/CentOS 6.5   has issues with ip_gre module
+package "kernel" do
+  action :upgrade
+end
+
 package "midolman"
 execute "echo 'JAVA_HOME=/usr/lib/jvm/java-1.7.0/'| cat - /etc/midolman/midolman-env.sh > /tmp/out && mv /tmp/out /etc/midolman/midolman-env.sh"
 
@@ -19,6 +24,11 @@ if node['midokura']['cassandras']
   end
 end
 
+service 'cassandra' do
+  action :start
+end
+
+# HACK: the midolman daemon does not support chkconfig
 service 'midolman' do
   action :start
 end
