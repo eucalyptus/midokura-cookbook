@@ -22,7 +22,6 @@ template "/usr/share/midonet-api/WEB-INF/web.xml" do
   mode 00774
   owner "tomcat"
   group "tomcat"
-  notifies :restart, "service[tomcat]"
 end
 
 service 'tomcat' do
