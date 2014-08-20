@@ -1,8 +1,6 @@
 default['midokura']['repo-username'] = ''
 default['midokura']['repo-password'] = ''
 default['java']['jdk_version'] = '7'
-default['java']['install_flavor'] = 'oracle'
-default['java']['oracle']['accept_oracle_download_terms'] = true
 default['cassandra']['cluster_name'] = 'midonet'
 default['cassandra']['version'] = '2.0.9'
 default['cassandra']['release'] = '1'
