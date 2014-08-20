@@ -24,10 +24,6 @@ if node['midokura']['cassandras']
   end
 end
 
-service 'cassandra' do
-  action :start
-end
-
 # HACK: the midolman daemon does not support chkconfig
 service 'midolman' do
   action :start
