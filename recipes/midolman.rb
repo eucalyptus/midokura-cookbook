@@ -25,6 +25,8 @@ if node['midokura']['cassandras']
 end
 
 # HACK: the midolman daemon does not support chkconfig
+execute "sed -i 's/^# chkconfig.*/# chkconfig: 2345 80 20/g' /etc/init.d/midolman"
+
 service 'midolman' do
-  action :start
+  action [:start, :enable]
 end
