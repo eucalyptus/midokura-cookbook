@@ -15,7 +15,6 @@ package "iproute" do
 end
 
 package "midolman"
-execute "echo 'JAVA_HOME=/usr/lib/jvm/java-1.7.0/'| cat - /etc/midolman/midolman-env.sh > /tmp/out && mv /tmp/out /etc/midolman/midolman-env.sh"
 
 package "kmod-openvswitch"
 
@@ -33,8 +32,11 @@ if node['midokura']['cassandras']
   end
 end
 
-# HACK: the midolman daemon does not support chkconfig
-execute "sed -i 's/^# chkconfig.*/# chkconfig: 2345 80 20/g' /etc/init.d/midolman"
+# HACK: the midolman daemon does not support chkconfig nor does it properly report status
+template "/etc/init.d/midolman" do
+  source "midolman.init.erb"
+  mode "0655"
+end
 
 service 'midolman' do
   action [:start, :enable]
