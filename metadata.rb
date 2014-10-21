@@ -1,7 +1,7 @@
 name             'midokura'
 maintainer       'Vic Iglesias'
 maintainer_email 'viglesias@eucalyptus.com'
-license          'Apache 2'
+license          'BSD'
 description      'Installs/Configures midokura'
 long_description 'Installs/Configures midokura'
 version          '0.1.0'
