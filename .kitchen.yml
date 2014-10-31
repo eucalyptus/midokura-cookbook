@@ -21,4 +21,9 @@ suites:
   - name: default
     run_list:
       - recipe[midokura]
-    attributes: { midokura: { 'repo-username': 'USERNAME', 'repo-password': 'PASSWORD' }}
+    attributes:
+      midokura:
+        repo-username: 'USERNAME'
+        repo-password: 'PASSWORD'
+        midolman-host-mapping:
+          'default-centos-65.vagrantup.com': '10.0.2.15'
