@@ -3,6 +3,7 @@ include_recipe "midokura::_common"
 # Kernel shipping with RHEL/CentOS 6.5   has issues with ip_gre module
 package "kernel" do
   action :upgrade
+  options node['midokura']['yum-options']
 end
 
 ip_route_rpm = "#{Chef::Config[:file_cache_path]}/iproute-2.6.32-130.el6ost.netns.2.x86_64.rpm"
@@ -12,11 +13,16 @@ end
 
 package "iproute" do
   source ip_route_rpm
+  options node['midokura']['yum-options']
 end
 
-package "midolman"
+package "midolman" do
+  options node['midokura']['yum-options']
+end
 
-package "kmod-openvswitch"
+package "kmod-openvswitch" do
+  options node['midokura']['yum-options']
+end
 
 if node['midokura']['zookeepers']
   zookeeper_host_list = node['midokura']['zookeepers'].join(',')

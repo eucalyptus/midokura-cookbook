@@ -1,6 +1,8 @@
 include_recipe "midokura::_common"
 
-package "midonet-cp"
+package "midonet-cp" do
+  options node['midokura']['yum-options']
+end
 
 template "/var/www/html/midonet-cp/config.js" do
   source "midonet-cp.js.erb"

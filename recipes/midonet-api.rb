@@ -1,8 +1,14 @@
 include_recipe "midokura::_common"
 
-package "midonet-api"
-package "python-midonetclient"
-package "tomcat6"
+package "midonet-api" do
+  options node['midokura']['yum-options']
+end
+package "python-midonetclient" do
+  options node['midokura']['yum-options']
+end
+package "tomcat6" do
+  options node['midokura']['yum-options']
+end
 
 # HACK: the midonet-api package should include tomcat loader midonet-api.xml
 file "/etc/tomcat6/Catalina/localhost/midonet-api.xml" do
