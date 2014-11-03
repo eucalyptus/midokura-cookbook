@@ -1,5 +1,7 @@
 midonet_url = node['midokura']['midonet-api-url']
 tunnel_zone_name = node['midokura']['default-tunnel-zone']
+initial_tenant = node['midokura']['initial-tenant']
+bgp_peers = node['midokura']['bgp-peers']
 
 midonet_command_prefix = "midonet-cli --midonet-url=#{midonet_url} -A"
 
@@ -12,7 +14,7 @@ end
 
 ### Add hosts to tunnel zone
 midolmen = node['midokura']['midolman-host-mapping']
-log "Midolmen: #{midolmen}"
+log "Attaching Midolmen: #{midolmen}"
 midolmen.each do |hostname, host_ip|
   bash "Configure host: #{hostname}" do
     code <<-EOH
@@ -29,10 +31,27 @@ end
 
 bash 'Initialize Tenant' do
   code <<-EOH
-  BRID=`#{midonet_command_prefix} --tenant euca_tenant_1 -e add bridge name foo `
-  #{midonet_command_prefix} --tenant euca_tenant_1 -e delete bridge $BRID
+  BRIDGE=`#{midonet_command_prefix} --tenant #{initial_tenant} -e add bridge name foo`
+  #{midonet_command_prefix} --tenant #{initial_tenant} -e delete bridge $BRIDGE
   EOH
   flags '-xe'
   retries 10
   retry_delay 20
 end
+
+bgp_peers.each do |bgp_info|
+  bash "Peer BGP: router=#{bgp_info['router-name']}  port-ip=#{bgp_info['port-ip']}" do
+    code <<-EOH
+      ROUTER_ID=`#{midonet_command_prefix} -e router list name #{bgp_info['router-name']} | awk '{print $2}'`
+      PORT_ID=`#{midonet_command_prefix} -e router id $ROUTER_ID list port | grep #{bgp_info['port-ip']} | awk '{print $2}'`
+      RTR_INFO=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp add local-AS #{bgp_info['local-as']} peer-AS #{bgp_info['remote-as']} peer #{bgp_info['peer-address']}`
+      ROUTER=`echo $RTR_INFO| awk -F: '{print $1}'`
+      PORT=`echo $RTR_INFO| awk -F: '{print $2}'`
+      BGP=`echo $RTR_INFO| awk -F: '{print $3}'`
+      #{midonet_command_prefix} -e router $ROUTER port $PORT bgp $BGP add route net #{bgp_info['route']}
+    EOH
+    flags '-xe'
+    retries 10
+    retry_delay 20
+  end
+end unless bgp_peers.nil?

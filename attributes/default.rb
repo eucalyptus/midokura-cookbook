@@ -12,6 +12,14 @@ default['midokura']['midonet-api-url'] = 'http://127.0.0.1:8080/midonet-api'
 default['midokura']['zookeepers'] = ['127.0.0.1:2181']
 default['midokura']['cassandras'] = ['127.0.0.1:9160']
 #default['midokura']['midolman-host-mapping'] = {'my-hostname.example.org' => '1.2.3.4'}
+#default['midokura']['bgp-peers'] = [{ 'router-name': 'eucart',
+#                                      'port-ip': '10.116.129.5',
+#                                      'remote-as': 65000,
+#                                      'local-as': 65001,
+#                                      'peer-address': '10.116.133.173',
+#                                      'route': '10.116.130.0/24'
+#                                    }]
+default['midokura']['initial-tenant'] = 'mido_tenant'
 default['midokura']['default-tunnel-zone'] = 'mido-tz'
 default['midokura']['auth-auth_provider'] = 'org.midonet.api.auth.MockAuthService'
 default['midokura']['keystone-service_protocol'] = 'http'
