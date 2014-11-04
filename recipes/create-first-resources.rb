@@ -26,6 +26,7 @@ midolmen.each do |hostname, host_ip|
     flags '-xe'
     retries 10
     retry_delay 20
+    not_if "#{midonet_command_prefix} -e list tunnel-zone name #{tunnel_zone_name} member | grep #{host_ip}"
   end
 end
 
@@ -44,11 +45,8 @@ bgp_peers.each do |bgp_info|
     code <<-EOH
       ROUTER_ID=`#{midonet_command_prefix} -e router list name #{bgp_info['router-name']} | awk '{print $2}'`
       PORT_ID=`#{midonet_command_prefix} -e router id $ROUTER_ID list port | grep #{bgp_info['port-ip']} | awk '{print $2}'`
-      RTR_INFO=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp add local-AS #{bgp_info['local-as']} peer-AS #{bgp_info['remote-as']} peer #{bgp_info['peer-address']}`
-      ROUTER=`echo $RTR_INFO| awk -F: '{print $1}'`
-      PORT=`echo $RTR_INFO| awk -F: '{print $2}'`
-      BGP=`echo $RTR_INFO| awk -F: '{print $3}'`
-      #{midonet_command_prefix} -e router $ROUTER port $PORT bgp $BGP add route net #{bgp_info['route']}
+      BGP_ID=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp add local-AS #{bgp_info['local-as']} peer-AS #{bgp_info['remote-as']} peer #{bgp_info['peer-address']}`
+      #{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp $BGP_ID add route net #{bgp_info['route']}
     EOH
     flags '-xe'
     retries 10
