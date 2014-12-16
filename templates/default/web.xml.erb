@@ -11,8 +11,7 @@
        to access the API is different from the actual server base URI. -->
   <context-param>
     <param-name>rest_api-base_uri</param-name>
-    <%= node['midokura']['tomcat-url']%>
-    <!-- <param-value>http://<%= node['fqdn'] %>:<%= node['tomcat']['port']%>/midonet-api</param-value> -->
+    <param-value>http://<%= node['fqdn'] %>:8080/midonet-api</param-value> 
   </context-param>
 
   <!-- CORS configuration -->

@@ -1,5 +1,4 @@
 include_recipe "midokura::_common"
-#include_recipe "tomcat"
 
 package "midonet-api" do
   options node['midokura']['yum-options']

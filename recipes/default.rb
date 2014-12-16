@@ -1,4 +1,3 @@
-include_recipe 'midokura::openssl'
 include_recipe 'java'
 include_recipe 'cassandra'
 include_recipe 'midokura::zookeeper'
