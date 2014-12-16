@@ -11,7 +11,6 @@ platforms:
       box: chef/centos-6.5
       network:
       - ["forwarded_port", {guest: 8080, host: 8080}]
-      - ["forwarded_port", {guest: 80, host: 8888}]
       customize:
         cpus: 2
         memory: 3024
@@ -23,10 +22,5 @@ suites:
       - recipe[midokura]
     attributes:
       midokura:
-        repo-username: 'eucalyptus'
-        repo-password: '8yU8Pj6h'
         midolman-host-mapping:
           'default-centos-65.vagrantup.com': '10.0.2.15'
-        tomcat-url: "<param-value>http://default-centos-65.vagrantup.com:8080/midonet-api</param-value>"
-
-
