@@ -4,14 +4,24 @@ default['java']['jdk_version'] = '7'
 default['java']['install_flavor'] = 'openjdk'
 default['java']['set_default'] = true
 default['cassandra']['cluster_name'] = 'midonet'
-default['cassandra']['version'] = '2.0.9'
+#default['cassandra']['version'] = '2.0.9'
 default['cassandra']['release'] = '1'
-default['midokura']['yum-options'] = ''
-default['midokura']['repo-url'] = 'yum.midokura.com/repo/v1.5/RHEL/6/'
+default['cassandra']['metrics_reporter'] = {'config' => {}}
+default['thrift']['version']  = '0.9.0'
+#default['thrift']['checksum'] = 'ac175080c8cac567b0331e394f23ac306472c071628396db2850cb00c41b0017'
+default['thrift']['mirror']   = 'http://archive.apache.org/dist/'
+default['tomcat']['port'] = 8080
+default['midokura']['yum-options'] = '--nogpgcheck'
+default['midokura']['repo-url']= 'http://repo.midonet.org/midonet/v2014.11/RHEL/6/testing/'
+default['midokura']['misc-repo-url']= 'http://repo.midonet.org/misc/RHEL/6/misc/'
 default['midokura']['midonet-api-url'] = 'http://127.0.0.1:8080/midonet-api'
-default['midokura']['zookeepers'] = ['127.0.0.1:2181']
+default['midokura']['gpgcheck'] = false
 default['midokura']['cassandras'] = ['127.0.0.1:9160']
-#default['midokura']['midolman-host-mapping'] = {'my-hostname.example.org' => '1.2.3.4'}
+default['midokura']['zookeepers'] = ['127.0.0.1:2181']
+default['midokura']['tomcat-url'] = "<param-value>http://<%= node['fqdn'] %>:8080/midonet-api</param-value>"
+#default['midokura']['midolman-host-mapping'] = {'default-centos-65.vagrantup.com' => '127.0.0.1'}
+#default['midokura']['midolman-host-mapping'] = {'machine1.qa1.eucalyptus-systems.com' => '1.2.3.4',
+#						'machine2.qa1.eucalyptus-systems.com' => '1.2.3.5'}
 #default['midokura']['bgp-peers'] = [{ 'router-name': 'eucart',
 #                                      'port-ip': '10.116.129.5',
 #                                      'remote-as': 65000,

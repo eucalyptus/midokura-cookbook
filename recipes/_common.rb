@@ -6,16 +6,21 @@
 #
 #
 #
+include_recipe 'yum'
 include_recipe 'yum-epel'
-if node["midokura"]["repo-username"] == ''
-  raise "Please set the Midokura repo username attribute in your environment: midokura->repo-username"
+
+yum_repository "midokura-main" do
+  action :create
+  description "midokura Package Repo"
+  url node["midokura"]["repo-url"]
+  gpgcheck node["midokura"]["gpgcheck"]
+  metadata_expire "1"
 end
-if node["midokura"]["repo-password"] == ''
-  raise "Please set the Midokura repo password attribute in your environment: midokura->repo-password"
-end
-template "/etc/yum.repos.d/midokura.repo" do
-  source "midokura.repo.erb"
-  mode 0440
-  owner "root"
-  group "root"
+
+yum_repository "midokura-misc" do
+  action :create
+  description "midokura Misc Package Repo"
+  url node["midokura"]["misc-repo-url"]
+  gpgcheck node["midokura"]["gpgcheck"]
+  metadata_expire "1" 
 end
