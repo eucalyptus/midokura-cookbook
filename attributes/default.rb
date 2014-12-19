@@ -12,7 +12,7 @@ default['midokura']['repo-url']= 'http://repo.midonet.org/midonet/v2014.11/RHEL/
 default['midokura']['misc-repo-url']= 'http://repo.midonet.org/misc/RHEL/6/misc/'
 default['midokura']['midonet-api-url'] = 'http://127.0.0.1:8080/midonet-api'
 default['midokura']['gpgcheck'] = false
-default['midokura']['cassandras'] = ['127.0.0.1:9160']
+default['midokura']['cassandras'] = ['127.0.0.1']
 default['midokura']['zookeepers'] = ['127.0.0.1:2181']
 #default['midokura']['midolman-host-mapping'] = {'default-centos-65.vagrantup.com' => '127.0.0.1'}
 #default['midokura']['midolman-host-mapping'] = {'machine1.qa1.eucalyptus-systems.com' => '1.2.3.4',
