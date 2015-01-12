@@ -7,12 +7,12 @@ package "python-midonetclient" do
   options node['midokura']['yum-options']
 end
 
-package "tomcat6" do
+package "tomcat" do
   options node['midokura']['yum-options']
 end
 
 # HACK: the midonet-api package should include tomcat loader midonet-api.xml
-file "/etc/tomcat6/Catalina/localhost/midonet-api.xml" do
+file "/etc/tomcat/Catalina/localhost/midonet-api.xml" do
   content "<Context path=\"/midonet-api\" docBase=\"/usr/share/midonet-api\" antiResourceLocking=\"false\" privileged=\"true\"/>"
   owner "tomcat"
   group "tomcat"
@@ -29,9 +29,9 @@ template "/usr/share/midonet-api/WEB-INF/web.xml" do
   mode 00774
   owner "tomcat"
   group "tomcat"
-  notifies :restart, "service[tomcat6]", :immediately
+  notifies :restart, "service[tomcat]", :immediately
 end
 
-service 'tomcat6' do
+service 'tomcat' do
   action [:enable, :start]
 end
