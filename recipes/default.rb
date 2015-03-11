@@ -1,7 +1,7 @@
 include_recipe 'java'
 
-execute 'install openssl-devel' do
-  command 'yum -y install openssl-devel'
+package 'openssl-devel' do
+  action :install
 end
 
 include_recipe 'cassandra'
