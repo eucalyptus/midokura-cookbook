@@ -3,7 +3,7 @@ include_recipe 'java'
 yum_repository "datastax" do
   description "DataStax Repo for Apache Cassandra"
   url "http://rpm.datastax.com/community"
-  gpgcheck = False
+  gpgcheck false
   action :create
 end
 
