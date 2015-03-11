@@ -1,10 +1,8 @@
 include_recipe 'java'
 
-package 'openssl-devel' do
-  action :install
-end
+# package 'openssl-devel'
+# include_recipe 'cassandra'
 
-include_recipe 'cassandra'
 include_recipe 'midokura::zookeeper'
 include_recipe 'midokura::midolman'
 include_recipe 'midokura::midonet-api'
