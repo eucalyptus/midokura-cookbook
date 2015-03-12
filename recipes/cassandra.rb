@@ -1,17 +1,19 @@
 yum_repository "datastax" do
   description "DataStax Repo for Apache Cassandra"
-  url "http://rpm.datastax.com/community"
+  url node['cassandra']['repo-url']
   gpgcheck false
   metadata_expire "1"
   sslverify false
   action :create
 end
 
-package 'dsc20'
-package 'cassandra20'
+package node['cassandra']['package']
 
 execute "Set cassandra listening address" do
  command "sed -i -e 's/localhost/#{node['fqdn']}/g' /etc/cassandra/conf/cassandra.yaml"
+end
+
+execute "Set cassandra cluster_name" do
  command "sed -i -e 's/Test\ Cluster/#{node['cassandra']['cluster_name']}/g' /etc/cassandra/conf/cassandra.yaml"
 end
 

@@ -3,9 +3,11 @@ default['midokura']['repo-password'] = ''
 default['java']['jdk_version'] = '7'
 default['java']['install_flavor'] = 'openjdk'
 default['java']['set_default'] = true
+default['cassandra']['repo-url'] = 'http://rpm.datastax.com/community'
+default['cassandra']['pacakge'] = 'dsc20'
 default['cassandra']['cluster_name'] = 'midonet'
-default['cassandra']['version'] = '2.0.9'
-default['cassandra']['release'] = '1'
+# default['cassandra']['version'] = '2.0.9'
+# default['cassandra']['release'] = '1'
 #default['cassandra']['metrics_reporter'] = {'config' => {}}
 default['midokura']['yum-options'] = '--nogpgcheck'
 default['midokura']['repo-url']= 'http://repo.midonet.org/midonet/v2014.11/RHEL/6/testing/'
