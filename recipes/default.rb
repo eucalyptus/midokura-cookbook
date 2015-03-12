@@ -4,6 +4,7 @@ yum_repository "datastax" do
   description "DataStax Repo for Apache Cassandra"
   url "http://rpm.datastax.com/community"
   gpgcheck false
+  metadata_expire "1"
   sslverify false
   action :create
 end
