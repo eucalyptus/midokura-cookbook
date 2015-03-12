@@ -9,8 +9,8 @@ yum_repository "datastax" do
   action :create
 end
 
-package 'dsc20-2.0.12-1'
-package 'cassandra20-2.0.12-1'
+package 'dsc20'
+package 'cassandra20'
 
 include_recipe 'midokura::zookeeper'
 include_recipe 'midokura::midolman'
