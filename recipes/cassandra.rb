@@ -15,7 +15,7 @@ execute "Set cassandra listening address" do
  command "sed -i -e 's/Test\ Cluster/#{node['cassandra']['cluster_name']}/g' /etc/cassandra/conf/cassandra.yaml"
 end
 
-service "cassandra20" do
+service "cassandra" do
   action [ :enable, :start ]
   supports :status => true, :start => true, :stop => true, :restart => true
 end
