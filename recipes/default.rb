@@ -1,5 +1,5 @@
 include_recipe 'java'
-include recipe 'midokura::cassandra'
+include_recipe 'midokura::cassandra'
 include_recipe 'midokura::zookeeper'
 include_recipe 'midokura::midolman'
 include_recipe 'midokura::midonet-api'
