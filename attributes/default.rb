@@ -1,8 +1,5 @@
 default['midokura']['repo-username'] = ''
 default['midokura']['repo-password'] = ''
-default['java']['jdk_version'] = '7'
-default['java']['install_flavor'] = 'openjdk'
-default['java']['set_default'] = true
 default['cassandra']['repo-url'] = 'http://rpm.datastax.com/community'
 default['cassandra']['package'] = 'dsc20'
 default['cassandra']['cluster_name'] = 'midonet'
