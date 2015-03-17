@@ -26,14 +26,16 @@ end
 
 if (node['midokura']['zookeepers'] == [])
   raise "Please set the Midokura zookeepers host list attribute in your environment: midokura->zookeepers"
+else
   zookeeper_host_list = node['midokura']['zookeepers'].join(',')
   execute "Set zookeepers in midolman.conf" do
     command "sed -i 's/^zookeeper_hosts.*/zookeeper_hosts = #{zookeeper_host_list}/g' /etc/midolman/midolman.conf"
   end
 end
 
-if (node['midokura']['cassandras'] == []) 
+if (node['midokura']['cassandras'] == [])
   raise "Please set the Midokura cassandras host list attribute in your environment: midokura->cassandras"
+else
   cassandra_host_list = node['midokura']['cassandras'].join(',')
   execute "Set cassandra nodes in midolman.conf" do
     command "sed -i 's/^servers.*/servers = #{cassandra_host_list}/g' /etc/midolman/midolman.conf"
