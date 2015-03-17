@@ -1,4 +1,4 @@
-include_recipe 'midokura::java'
+# include_recipe 'midokura::java'
 include_recipe 'midokura::cassandra'
 include_recipe 'midokura::zookeeper'
 include_recipe 'midokura::midolman'
