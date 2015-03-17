@@ -6,8 +6,9 @@ end
 
 directory "/usr/java"
 
-execute "ZOOKEEPER: sym link step 2 create link" do
- command "ln -s /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64/jre/ /usr/java/default"
+link "/usr/java/default" do
+  to "/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64/jre/"
+  only_if 'test -d /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64/jre'
 end
 
 package "zookeeper" do
