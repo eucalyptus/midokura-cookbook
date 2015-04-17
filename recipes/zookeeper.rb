@@ -7,8 +7,8 @@ end
 directory "/usr/java"
 
 link "/usr/java/default" do
-  to "/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.79.x86_64/jre/"
-  only_if 'test -d /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.79.x86_64/jre'
+  to "/usr/lib/jvm/jre/"
+  only_if 'test -d /usr/lib/jvm/jre'
 end
 
 package "zookeeper" do
