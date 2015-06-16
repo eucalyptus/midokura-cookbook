@@ -27,7 +27,7 @@ default['midokura']['zookeepers'] = []
 #                                    }]
 default['midokura']['initial-tenant'] = 'mido_tenant'
 default['midokura']['default-tunnel-zone'] = 'mido-tz'
-default['midokura']['auth-auth_provider'] = 'org.midonet.api.auth.MockAuthService'
+default['midokura']['auth-auth_provider'] = 'org.midonet.cluster.auth.MockAuthService'
 default['midokura']['keystone-service_protocol'] = 'http'
 default['midokura']['keystone-service_host'] = '127.0.0.1'
 default['midokura']['keystone-service_port'] = 35357
