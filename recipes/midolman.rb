@@ -8,7 +8,7 @@ end
 
 ip_route_rpm = "#{Chef::Config[:file_cache_path]}/iproute-2.6.32-130.el6ost.netns.2.x86_64.rpm"
 remote_file ip_route_rpm do
-  source "https://repos.fedorapeople.org/repos/openstack/openstack-icehouse/epel-6/iproute-2.6.32-130.el6ost.netns.2.x86_64.rpm"
+  source "https://repos.fedorapeople.org/repos/openstack/EOL/openstack-icehouse/epel-6/iproute-2.6.32-130.el6ost.netns.2.x86_64.rpm"
 end
 
 package "iproute" do
