@@ -25,6 +25,6 @@ clientPort=2181
 #autopurge.purgeInterval=1
 <% server_count = 1 %>
 <% for @item in node['midokura']['zookeepers'] -%>
-server.<%= server_count %>=<%= @item[0..-6] %>:2888:3888
+server.<%= server_count %>=<%= @item.split(":")[0] %>:2888:3888
 <% server_count + 1 %>
 <% end -%>
