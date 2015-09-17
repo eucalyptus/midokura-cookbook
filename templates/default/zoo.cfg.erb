@@ -23,8 +23,7 @@ clientPort=2181
 # Purge task interval in hours
 # Set to "0" to disable auto purge feature
 #autopurge.purgeInterval=1
-<% server_count = 1 %>
-<% for @item in node['midokura']['zookeepers'] -%>
-server.<%= server_count %>=<%= @item[0..-6] %>:2888:3888
-<% server_count + 1 %>
+
+<% node['midokura']['zookeepers'].each_with_index do |item,index| -%>
+server.<%= index %>=<%= @item.split(":")[0] %>:2888:3888
 <% end -%>
