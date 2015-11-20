@@ -22,6 +22,7 @@ execute "CASSANDRA: set seed list" do
  command "sed -i -e 's/seeds:\ \"127.0.0.1\"/seeds:\ \"#{cassandra_host_list}\"/' /etc/cassandra/conf/cassandra.yaml"
 end
 
+
 service "cassandra" do
   action [ :enable, :start ]
   supports :status => true, :start => true, :stop => true, :restart => true
