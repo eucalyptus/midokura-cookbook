@@ -5,6 +5,33 @@ bgp_peers = node['midokura']['bgp-peers']
 
 midonet_command_prefix = "midonet-cli --midonet-url=#{midonet_url} -A"
 
+
+
+Chef::Log.info("Checking/Waiting for Midonet API to become available")
+
+### Restart Tomcat and Midolman if the midonet API is not available
+execute 'Restart Tomcat and Midolman' do
+  command "service midolman restart; service zookeeper restart"
+  retries 3
+  retry_delay 10
+  not_if "#{midonet_command_prefix} -e help || sleep 20 && #{midonet_command_prefix} -e help"
+end
+
+
+### Sets Cassandra server config in Zookeeper
+#### This overwrites the existing entries with whatever is in the cassandras attr
+cassandra_host_list = node['midokura']['cassandras'].join(',')
+Chef::Log.info("Setting Cassandra Servers: #{cassandra_host_list}")
+bash "Configure Cassandra Servers" do
+   code <<-EOH
+   echo "Setting Cassandra Servers: #{cassandra_host_list}"
+   echo 'cassandra.servers : "#{cassandra_host_list}"' | mn-conf set -t default
+   EOH
+   retries 6
+   retry_delay 10
+   flags '-xe'
+end
+
 execute 'Create TunnelZone' do
   command "#{midonet_command_prefix} -e add tunnel-zone name #{tunnel_zone_name} type gre"
   retries 20
@@ -13,6 +40,7 @@ execute 'Create TunnelZone' do
 end
 
 ### Add hosts to tunnel zone
+members=`#{midonet_command_prefix} -e list tunnel-zone name #{tunnel_zone_name} member`
 midolmen = node['midokura']['midolman-host-mapping']
 log "Attaching Midolmen: #{midolmen}"
 midolmen.each do |hostname, host_ip|
@@ -26,27 +54,46 @@ midolmen.each do |hostname, host_ip|
     flags '-xe'
     retries 10
     retry_delay 20
-    not_if "#{midonet_command_prefix} -e list tunnel-zone name #{tunnel_zone_name} member | grep #{host_ip}"
+    #not_if "#{midonet_command_prefix} -e list tunnel-zone name #{tunnel_zone_name} member | grep #{host_ip}"
+    not_if "echo \"#{members}\" | grep \"address #{host_ip}$\""
   end
+  members << "address #{host_ip}\n"
 end
 
-bash 'Initialize Tenant' do
-  code <<-EOH
-  BRIDGE=`#{midonet_command_prefix} --tenant #{initial_tenant} -e add bridge name foo`
-  #{midonet_command_prefix} --tenant #{initial_tenant} -e delete bridge $BRIDGE
-  EOH
-  flags '-xe'
-  retries 10
-  retry_delay 20
-end
-
+### Configure BGP router info
 bgp_peers.each do |bgp_info|
-  bash "Peer BGP: router=#{bgp_info['router-name']}  port-ip=#{bgp_info['port-ip']}" do
+  bash "Doing BGP entry for: router=#{bgp_info['router-name']}  port-ip=#{bgp_info['port-ip']}" do
     code <<-EOH
-      ROUTER_ID=`#{midonet_command_prefix} -e router list name #{bgp_info['router-name']} | awk '{print $2}'`
-      PORT_ID=`#{midonet_command_prefix} -e router id $ROUTER_ID list port | grep #{bgp_info['port-ip']} | awk '{print $2}'`
-      BGP_ID=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp add local-AS #{bgp_info['local-as']} peer-AS #{bgp_info['remote-as']} peer #{bgp_info['peer-address']}`
-      #{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp $BGP_ID add route net #{bgp_info['route']}
+      ROUTER_ID=`#{midonet_command_prefix} -e router list name #{bgp_info['router-name']} | grep #{bgp_info['router-name']} | awk '{print $2}'`
+      PORT_INFO=`#{midonet_command_prefix} -e router $ROUTER_ID list port`
+      if [ `echo $PORT_INFO | grep #{bgp_info['port-ip']} | grep port | awk '{print $2}'` ]; then
+         PORT_ID=`echo $PORT_INFO | grep #{bgp_info['port-ip']} | grep port | awk '{print $2}'`
+      else
+         echo "PORT not found on router:#{bgp_info['router-name']} for \"#{bgp_info['port-ip']}\""
+         exit 1
+      fi
+      BGP_INFO=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID list bgp`
+      if [ `echo $BGP_INFO | grep "#{bgp_info['local-as']}\\|^$" | grep  "#{bgp_info['remote-as']}\\|^$" | awk '{print $2}'` ]; then
+        BGP_ID=`echo $BGP_INFO | grep  "#{bgp_info['remote-as']}\\|^$" | awk '{print $2}'`
+        echo "Found existing BGP entry"
+      else
+        echo "Adding new BPG entry for router: #{bgp_info['router-name']}"
+        BGP_ID=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp add local-AS #{bgp_info['local-as']} peer-AS #{bgp_info['remote-as']} peer #{bgp_info['peer-address']}`
+        if [ "x$BGP_ID" == "x" ]; then
+          echo "BGP ID NOT RETRIEVED FROM midonet-cli add command?"
+          exit 1
+        fi
+      fi
+      ROUTES=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp $BGP_ID list route`
+      bgp_route="net #{bgp_info['route']}$"
+      if [ `echo $ROUTES | grep "$bgp_route"` ]; then
+        AD_ROUTE=`echo $ROUTES | grep "$bgp_route"`
+        echo "Found existing BGP route: $AD_ROUTE"
+      else
+        AD_ROUTE=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp $BGP_ID add route net #{bgp_info['route']}`
+        echo "Added new BGP route: $AD_ROUTE"
+        echo "Found existing BGP route: $AD_ROUTE"
+      fi 
     EOH
     flags '-xe'
     retries 10
