@@ -66,15 +66,15 @@ bgp_peers.each do |bgp_info|
     code <<-EOH
       ROUTER_ID=`#{midonet_command_prefix} -e router list name #{bgp_info['router-name']} | grep #{bgp_info['router-name']} | awk '{print $2}'`
       PORT_INFO=`#{midonet_command_prefix} -e router $ROUTER_ID list port`
-      if [ `echo $PORT_INFO | grep #{bgp_info['port-ip']} | grep port | awk '{print $2}'` ]; then
-         PORT_ID=`echo $PORT_INFO | grep #{bgp_info['port-ip']} | grep port | awk '{print $2}'`
+      if [ `echo "$PORT_INFO" | grep #{bgp_info['port-ip']} | grep port | awk '{print $2}'` ]; then
+         PORT_ID=`echo "$PORT_INFO" | grep #{bgp_info['port-ip']} | grep port | awk '{print $2}'`
       else
          echo "PORT not found on router:#{bgp_info['router-name']} for \"#{bgp_info['port-ip']}\""
          exit 1
       fi
       BGP_INFO=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID list bgp`
-      if [ `echo $BGP_INFO | grep "#{bgp_info['local-as']}\\|^$" | grep  "#{bgp_info['remote-as']}\\|^$" | awk '{print $2}'` ]; then
-        BGP_ID=`echo $BGP_INFO | grep  "#{bgp_info['remote-as']}\\|^$" | awk '{print $2}'`
+      if [ `echo "$BGP_INFO" | grep "#{bgp_info['local-as']}\\|^$" | grep  "#{bgp_info['remote-as']}\\|^$" | awk '{print $2}'` ]; then
+        BGP_ID=`echo "$BGP_INFO" | grep  "#{bgp_info['remote-as']}\\|^$" | awk '{print $2}'`
         echo "Found existing BGP entry"
       else
         echo "Adding new BPG entry for router: #{bgp_info['router-name']}"
@@ -86,8 +86,8 @@ bgp_peers.each do |bgp_info|
       fi
       ROUTES=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp $BGP_ID list route`
       bgp_route="net #{bgp_info['route']}$"
-      if [ `echo $ROUTES | grep "$bgp_route"` ]; then
-        AD_ROUTE=`echo $ROUTES | grep "$bgp_route"`
+      if [ `echo "$ROUTES" | grep "$bgp_route"` ]; then
+        AD_ROUTE=`echo "$ROUTES" | grep "$bgp_route"`
         echo "Found existing BGP route: $AD_ROUTE"
       else
         AD_ROUTE=`#{midonet_command_prefix} -e router $ROUTER_ID port $PORT_ID bgp $BGP_ID add route net #{bgp_info['route']}`
