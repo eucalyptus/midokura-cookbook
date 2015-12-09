@@ -11,7 +11,7 @@ Chef::Log.info("Checking/Waiting for Midonet API to become available")
 
 ### Restart Tomcat and Midolman if the midonet API is not available
 execute 'Restart Tomcat and Midolman' do
-  command "service midolman restart; service zookeeper restart"
+  command "service midolman restart; service tomcat restart"
   retries 3
   retry_delay 10
   not_if "#{midonet_command_prefix} -e help || sleep 20 && #{midonet_command_prefix} -e help"
