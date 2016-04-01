@@ -1,4 +1,5 @@
 include_recipe "midokura::_common"
+require 'chef/version_constraint'
 
 # Kernel shipping with RHEL/CentOS 6.5   has issues with ip_gre module
 package "kernel" do
@@ -20,9 +21,12 @@ package "midolman" do
   options node['midokura']['yum-options']
 end
 
-package "kmod-openvswitch" do
-  options node['midokura']['yum-options']
+if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+  package "kmod-openvswitch" do
+    options node['midokura']['yum-options']
+  end
 end
+
 
 if (node['midokura']['zookeepers'] == [])
   raise "Please set the Midokura zookeepers host list attribute in your environment: midokura->zookeepers"
