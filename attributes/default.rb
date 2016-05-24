@@ -43,3 +43,8 @@ default['midokura']['keystone-service_port'] = '999888777666'
 default['midokura']['keystone-tenant_name'] = 'admin'
 default['zookeeper']['libsdir'] = '/var/lib/zookeeper'
 default['zookeeper']['server-index'] = nil
+# uninstall attribute controls whether we retain or destroy
+# config files during nuke recipe
+default['zookeeper']['uninstall']['destroy'] = true
+default['cassandra']['uninstall']['destroy'] = true
+default['midokura']['uninstall']['destroy'] = true
