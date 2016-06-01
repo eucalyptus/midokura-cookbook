@@ -1,3 +1,4 @@
+require 'chef/version_constraint'
 include_recipe "midokura::_common"
 
 if (node['midokura']['zookeepers'] == [])
@@ -14,7 +15,12 @@ template "/etc/zookeeper/zookeeper-env.sh" do
   source "zookeeper-env.sh.erb"
   owner "zookeeper"
   group "zookeeper"
-  notifies :restart, "service[zookeeper]", :delayed
+  if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+    notifies :restart, "service[zookeeper]", :delayed
+  end
+  if Chef::VersionConstraint.new("~> 7.0").include?(node['platform_version'])
+    notifies :run, 'execute[Start zookeeper service with system V init]', :delayed
+  end
 end
 
 
@@ -23,7 +29,12 @@ template "/etc/zookeeper/zoo.cfg" do
   source "zoo.cfg.erb"
   owner "zookeeper"
   group "zookeeper"
-  notifies :restart, "service[zookeeper]", :delayed
+  if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+    notifies :restart, "service[zookeeper]", :delayed
+  end
+  if Chef::VersionConstraint.new("~> 7.0").include?(node['platform_version'])
+    notifies :run, 'execute[Start zookeeper service with system V init]', :delayed
+  end
 end
 
 ### Create or maintain zk libs dir and perms
@@ -73,14 +84,28 @@ template "#{datadir}/myid" do
   mode '0770'
   owner "zookeeper"
   group "zookeeper"
-  notifies :restart, "service[zookeeper]", :delayed
+  if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+    notifies :restart, "service[zookeeper]", :delayed
+  end
+  if Chef::VersionConstraint.new("~> 7.0").include?(node['platform_version'])
+    notifies :run, 'execute[Start zookeeper service with system V init]', :delayed
+  end
 end
 
-### Start Zookeeper service
-service 'zookeeper' do
-  supports :status => true
-  supports :restart => true
-  action [:enable, :start]
+if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+  ### Start Zookeeper service
+  service 'zookeeper' do
+    supports :status => true
+    supports :restart => true
+    action [:enable, :start]
+  end
+end
+if Chef::VersionConstraint.new("~> 7.0").include?(node['platform_version'])
+  # start zookeeper service on el7 with service command, the current rpm (3.4.5-1)
+  # doesn't have a proper systemd unit file and therefore 'systemctl' fails
+  execute "Start zookeeper service with system V init" do
+    command "service zookeeper start"
+  end
 end
 
 ### Wait for the zookeeper service to respond as "ok"

@@ -1,3 +1,5 @@
+require 'chef/version_constraint'
+
 yum_repository "datastax" do
   description "DataStax Repo for Apache Cassandra"
   url node['cassandra']['repo-url']
@@ -22,8 +24,16 @@ execute "CASSANDRA: set seed list" do
  command "sed -i -e 's/seeds:\ \"127.0.0.1\"/seeds:\ \"#{cassandra_host_list}\"/' /etc/cassandra/conf/cassandra.yaml"
 end
 
-
-service "cassandra" do
-  action [ :enable, :start ]
-  supports :status => true, :start => true, :stop => true, :restart => true
+if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+  service "cassandra" do
+    action [ :enable, :start ]
+    supports :status => true, :start => true, :stop => true, :restart => true
+  end
+end
+if Chef::VersionConstraint.new("~> 7.0").include?(node['platform_version'])
+  # start cassandra service on el7 with service command, the current rpm (2.0.17-1)
+  # doesn't have a proper systemd unit file and therefore 'systemctl' fails
+  execute "Start cassandra service with system V init" do
+    command "service cassandra start"
+  end
 end

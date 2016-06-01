@@ -42,7 +42,9 @@ end
 
 ## Purge all Packages
 removelist = %w{zookeeper #{node['cassandra']['package']} cassandra20 midolman
-    midonet-api python-midonetclient tomcat}
+    midonet-api python-midonetclient tomcat tomcat-servlet tomcat-jsp-2.2-api
+    tomcat-el-2.2-api tomcat-lib apache-commons-collections apache-commons-daemon
+    apache-commons-dbcp apache-commons-logging apache-commons-pool}
 
 removelist.each do |pkg|
   package pkg do

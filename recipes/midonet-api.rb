@@ -32,6 +32,32 @@ template "/usr/share/midonet-api/WEB-INF/web.xml" do
   notifies :restart, "service[tomcat]", :immediately
 end
 
+tomcat_config = "/etc/tomcat/tomcat.conf"
+memory = node['tomcat']['jvm']['memory']
+
+ruby_block "update tomcat.conf to set Java heap size" do
+  block do
+    fe = Chef::Util::FileEdit.new(tomcat_config)
+    fe.insert_line_if_no_match(/^JAVA_OPTS.*/, "JAVA_OPTS=\"-Xmx#{memory}\"")
+    #fe.insert_line_if_no_match(/^JAVA_OPTS.*/, "JAVA_OPTS=\"\"")
+    fe.write_file
+  end
+  not_if "egrep '^JAVA_OPTS' #{tomcat_config}"
+  notifies :restart, "service[tomcat]", :immediately
+end
+
+tomcat_server_xml = "/etc/tomcat/server.xml"
+
+ruby_block "update tomcat server.xml to comment out Connector port 8009 protocol AJP" do
+  block do
+    fe = Chef::Util::FileEdit.new(tomcat_server_xml)
+    fe.search_file_replace(/\<Connector port=\"8009\" protocol=\"AJP\/1.3\" redirectPort=\"8443\" \/\>/,
+      "\<!-- Connector port=\"8009\" protocol=\"AJP\/1.3\" redirectPort=\"8443\" --\>")
+    fe.write_file
+  end
+  notifies :restart, "service[tomcat]", :immediately
+end
+
 service 'tomcat' do
   action [:enable, :start]
 end

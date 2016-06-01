@@ -48,3 +48,4 @@ default['zookeeper']['server-index'] = nil
 default['zookeeper']['uninstall']['destroy'] = true
 default['cassandra']['uninstall']['destroy'] = true
 default['midokura']['uninstall']['destroy'] = true
+default['tomcat']['jvm']['memory'] = '1g'
