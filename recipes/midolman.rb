@@ -46,10 +46,14 @@ else
   end
 end
 
-# HACK: the midolman daemon does not support chkconfig nor does it properly report status
-template "/etc/init.d/midolman" do
-  source "midolman.init.erb"
-  mode "0655"
+if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+
+  # HACK: the midolman daemon does not support chkconfig nor does it properly report status
+  # because the el6 packaged init script is broken, continue to use our template for el6, but not for el7
+  template "/etc/init.d/midolman" do
+    source "midolman.init.erb"
+    mode "0655"
+  end
 end
 
 service 'midolman' do
