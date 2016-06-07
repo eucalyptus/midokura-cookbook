@@ -31,9 +31,17 @@ template "/usr/share/midonet-api/WEB-INF/web.xml" do
   group "tomcat"
 end
 
+template "/usr/share/midonet-api/WEB-INF/classes/logback.xml" do
+  source "logback.xml.erb"
+  mode 00774
+  owner "tomcat"
+  group "tomcat"
+end
+
 tomcat_config = "/etc/tomcat/tomcat.conf"
 memory = node['tomcat']['jvm']['memory']
 tomcat_server_xml = "/etc/tomcat/server.xml"
+tomcat_logging_prop = "/etc/tomcat/logging.properties"
 
 ruby_block "update tomcat.conf and server.xml" do
   block do
@@ -41,11 +49,25 @@ ruby_block "update tomcat.conf and server.xml" do
     fe = Chef::Util::FileEdit.new(tomcat_config)
     fe.insert_line_if_no_match(/^JAVA_OPTS.*/, "JAVA_OPTS=\"-Xmx#{memory}\"")
     fe.write_file
+
     Chef::Log.info "updating server.xml to comment out \"Connector port=8009\" if found"
     fe2 = Chef::Util::FileEdit.new(tomcat_server_xml)
     fe2.search_file_replace(/\<Connector port=\"8009\" protocol=\"AJP\/1.3\" redirectPort=\"8443\" \/\>/,
       "\<!-- Connector port=\"8009\" protocol=\"AJP\/1.3\" redirectPort=\"8443\" --\>")
+
+    Chef::Log.info "updating server.xml to use \"Connector address=127.0.0.1 port=8080\""
+    fe2.search_file_replace(/\<Connector port=\"8080\" protocol=\"HTTP\/1.1\"/,
+      "\<Connector address=\"127.0.0.1\" port=\"8080\" protocol=\"HTTP\/1.1\"")
     fe2.write_file
+
+    Chef::Log.info "updating logging.properties to remove ConsoleHandler"
+    fe3 = Chef::Util::FileEdit.new(tomcat_logging_prop)
+    fe3.search_file_replace(/.handlers = 1catalina.org.apache.juli.FileHandler\, java.util.logging.ConsoleHandler/,
+      ".handlers = 1catalina.org.apache.juli.FileHandler")
+    fe3.search_file_replace(/1catalina.org.apache.juli.FileHandler.level = FINE/,
+      "1catalina.org.apache.juli.FileHandler.level = WARN")
+    fe3.write_file
+
   end
   notifies :restart, "service[tomcat]", :immediately
 end
