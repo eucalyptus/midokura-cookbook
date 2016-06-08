@@ -85,10 +85,12 @@ if node['midokura']['uninstall']['destroy'] == true
     action :delete
   end
 
-  # HACK: the midolman daemon does not support chkconfig remove init we added
-  # TODO: mbacchi correct this, use systemd init on el7, fix handling on el6
-  file "/etc/init.d/midolman" do
-    action :delete
+  if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+    # HACK: the midolman daemon does not support chkconfig remove init we added
+
+    file "/etc/init.d/midolman" do
+      action :delete
+    end
   end
 
   file "/etc/tomcat/Catalina/localhost/midonet-api.xml" do
