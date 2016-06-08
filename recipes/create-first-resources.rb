@@ -1,3 +1,5 @@
+require 'chef/version_constraint'
+
 midonet_url = node['midokura']['midonet-api-url']
 tunnel_zone_name = node['midokura']['default-tunnel-zone']
 initial_tenant = node['midokura']['initial-tenant']
@@ -5,16 +7,24 @@ bgp_peers = node['midokura']['bgp-peers']
 
 midonet_command_prefix = "midonet-cli --midonet-url=#{midonet_url} -A"
 
-
-
 Chef::Log.info("Checking/Waiting for Midonet API to become available")
 
 ### Restart Tomcat and Midolman if the midonet API is not available
-execute 'Restart Tomcat and Midolman' do
-  command "service midolman restart; service tomcat restart"
-  retries 3
-  retry_delay 10
-  not_if "#{midonet_command_prefix} -e help || sleep 20 && #{midonet_command_prefix} -e help"
+if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+  execute 'Restart Tomcat and Midolman' do
+    command "service midolman restart; service tomcat restart"
+    retries 3
+    retry_delay 10
+    not_if "#{midonet_command_prefix} -e help || sleep 20 && #{midonet_command_prefix} -e help"
+  end
+end
+if Chef::VersionConstraint.new("~> 7.0").include?(node['platform_version'])
+  execute 'Restart Tomcat and Midolman' do
+    command "systemctl restart midolman; systemctl restart tomcat"
+    retries 3
+    retry_delay 10
+    not_if "#{midonet_command_prefix} -e help || sleep 20 && #{midonet_command_prefix} -e help"
+  end
 end
 
 execute 'Create TunnelZone' do
