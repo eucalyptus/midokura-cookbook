@@ -26,8 +26,19 @@ service 'zookeeper' do
 end
 
 ### Stop Cassandra service
-service "cassandra" do
-  action [ :stop ]
+if Chef::VersionConstraint.new("~> 6.0").include?(node['platform_version'])
+  service "cassandra" do
+    action [ :stop ]
+    only_if "ls /etc/rc.d/init.d/cassandra"
+  end
+end
+if Chef::VersionConstraint.new("~> 7.0").include?(node['platform_version'])
+  # stop cassandra service on el7 with service command, the current rpm (2.0.17-1)
+  # doesn't have a proper systemd unit file and therefore 'systemctl' fails
+  execute "Stop cassandra service with system V init" do
+    command "service cassandra stop"
+    only_if "ls /etc/rc.d/init.d/cassandra"
+  end
 end
 
 ### Stop Midolman service

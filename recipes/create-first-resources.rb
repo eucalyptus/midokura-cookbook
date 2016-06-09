@@ -17,21 +17,6 @@ execute 'Restart Tomcat and Midolman' do
   not_if "#{midonet_command_prefix} -e help || sleep 20 && #{midonet_command_prefix} -e help"
 end
 
-
-### Sets Cassandra server config in Zookeeper
-#### This overwrites the existing entries with whatever is in the cassandras attr
-cassandra_host_list = node['midokura']['cassandras'].join(',')
-Chef::Log.info("Setting Cassandra Servers: #{cassandra_host_list}")
-bash "Configure Cassandra Servers" do
-   code <<-EOH
-   echo "Setting Cassandra Servers: #{cassandra_host_list}"
-   echo 'cassandra.servers : "#{cassandra_host_list}"' | mn-conf set -t default
-   EOH
-   retries 6
-   retry_delay 10
-   flags '-xe'
-end
-
 execute 'Create TunnelZone' do
   command "#{midonet_command_prefix} -e add tunnel-zone name #{tunnel_zone_name} type gre"
   retries 20
