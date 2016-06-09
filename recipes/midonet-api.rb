@@ -11,6 +11,10 @@ package "tomcat" do
   options node['midokura']['yum-options']
 end
 
+package "midolman" do
+  options node['midokura']['yum-options']
+end
+
 # HACK: the midonet-api package should include tomcat loader midonet-api.xml
 file "/etc/tomcat/Catalina/localhost/midonet-api.xml" do
   content "<Context path=\"/midonet-api\" docBase=\"/usr/share/midonet-api\" antiResourceLocking=\"false\" privileged=\"true\"/>"
@@ -74,4 +78,18 @@ end
 
 service 'tomcat' do
   action [:enable, :start]
+end
+
+### Sets Cassandra server config in Zookeeper
+#### This overwrites the existing entries with whatever is in the cassandras attr
+cassandra_host_list = node['midokura']['cassandras'].join(',')
+Chef::Log.info("Setting Cassandra Servers: #{cassandra_host_list}")
+bash "Configure Cassandra Servers" do
+   code <<-EOH
+   echo "Setting Cassandra Servers: #{cassandra_host_list}"
+   echo 'cassandra.servers : "#{cassandra_host_list}"' | mn-conf set -t default
+   EOH
+   retries 6
+   retry_delay 10
+   flags '-xe'
 end
