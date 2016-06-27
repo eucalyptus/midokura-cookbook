@@ -19,10 +19,10 @@ clientPort=2181
 # http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance
 #
 # The number of snapshots to retain in dataDir
-#autopurge.snapRetainCount=3
+autopurge.snapRetainCount=3
 # Purge task interval in hours
 # Set to "0" to disable auto purge feature
-#autopurge.purgeInterval=1
+autopurge.purgeInterval=1
 
 <% node['midokura']['zookeepers'].each_with_index do |item,index| -%>
 server.<%= index+1 %>=<%= item.split(":")[0] %>:2888:3888
