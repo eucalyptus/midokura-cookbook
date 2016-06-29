@@ -1,6 +1,6 @@
 Midokura Cookbook
 ===================
-This cookbook installs and configures Midokura on CentOS 6 physical and virtual machines. Only package installations are supported. In order to access Midokura repos you will need a support contract which will provide you with the username and password that is necessary.
+This cookbook installs and configures Midokura on RHEL/CentOS 6 and 7 physical and virtual machines. Only package installations are supported. In order to access Midokura repos you will need a support contract which will provide you with the username and password that is necessary.
 
 Requirements
 ------------
@@ -13,7 +13,7 @@ To deploy you must have the following attributes defined for accessing the Midok
 The full list of attributes can be found in attributes/default.rb
 
 #### Platforms
-This cookbook only supports RHEL/CentOS 6 at the time being.
+This cookbook supports RHEL/CentOS 6 and 7.
 
 #### Bershelf
 A Berksfile is included to allow users to easily download the required cookbook dependencies.
